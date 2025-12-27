@@ -1,4 +1,3 @@
-# TODO: Test for removes
 # TODO: Test is terminal
 # TODO: Test promotions
 
@@ -165,3 +164,51 @@ def test_valid_partial_filled():
             indices[ind // 2],
             Baip.PieceType.KIT if ind % 2 == 0 else Baip.PieceType.CAT,
         )
+
+
+def test_removes():
+    b = Baip()
+    b.board[b.index_to_loc(0, 0)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(3, 0)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(0, 1)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(5, 1)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(1, 2)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(2, 2)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(3, 2)] = Baip.Square.CAT_A
+    b.board[b.index_to_loc(4, 2)] = Baip.Square.CAT_B
+    b.board[b.index_to_loc(0, 4)] = Baip.Square.CAT_A
+    b.board[b.index_to_loc(2, 4)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(3, 4)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(5, 5)] = Baip.Square.CAT_B
+    b.pieces[0].Kit = 0
+    b.pieces[0].Cat = 0
+    b.pieces[1].Kit = 4
+    b.pieces[1].Cat = 4
+
+    placements = b.get_legal_placements()
+    assert len(placements) == 0
+
+    removes = b.get_legal_removes()
+    assert removes[0] == b.index_to_loc(0, 0)
+    assert removes[1] == b.index_to_loc(3, 0)
+    assert removes[2] == b.index_to_loc(2, 2)
+    assert removes[3] == b.index_to_loc(3, 2)
+    assert removes[4] == b.index_to_loc(0, 4)
+
+    b.player = 1
+    b.pieces[0].Kit = 4
+    b.pieces[0].Cat = 4
+    b.pieces[1].Kit = 0
+    b.pieces[1].Cat = 0
+
+    placements = b.get_legal_placements()
+    assert len(placements) == 0
+
+    removes = b.get_legal_removes()
+    assert removes[0] == b.index_to_loc(0, 1)
+    assert removes[1] == b.index_to_loc(5, 1)
+    assert removes[2] == b.index_to_loc(1, 2)
+    assert removes[3] == b.index_to_loc(4, 2)
+    assert removes[4] == b.index_to_loc(2, 4)
+    assert removes[5] == b.index_to_loc(3, 4)
+    assert removes[6] == b.index_to_loc(5, 5)
