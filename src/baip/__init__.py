@@ -43,7 +43,7 @@ class Baip:
     class Pieces:
         Kit: int = 8
         Cat: int = 0
-        TotalKits: int = 0
+        TotalCats: int = 0
 
         def has_cats(self):
             return self.Cat > 0
