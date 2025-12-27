@@ -16,13 +16,13 @@ class Baip:
             if self is Baip.Square.EMPTY:
                 return "."
             if self is Baip.Square.KIT_A:
-                return "A"
-            if self is Baip.Square.CAT_A:
                 return "a"
+            if self is Baip.Square.CAT_A:
+                return "A"
             if self is Baip.Square.KIT_B:
-                return "B"
-            if self is Baip.Square.CAT_B:
                 return "b"
+            if self is Baip.Square.CAT_B:
+                return "B"
 
         def is_empty(self):
             return self is Baip.Square.EMPTY
@@ -41,8 +41,8 @@ class Baip:
 
     @dataclass()
     class Pieces:
-        Cat: int = 8
-        Kit: int = 0
+        Kit: int = 8
+        Cat: int = 0
         TotalKits: int = 0
 
         def has_cats(self):
@@ -96,7 +96,19 @@ class Baip:
                     placements.append(Baip.Placement(loc, Baip.PieceType.KIT))
         return placements
 
+    def loc_to_index(self, loc):
+        x = loc % self.len_x
+        y = loc // self.len_x
+        return (x, y)
+
+    def index_to_loc(self, x, y):
+        return x + y * self.len_x
+
+    def valid_index(self, x, y):
+        return x >= 0 and x < self.len_x and y >= 0 and y < self.len_y
+
     def apply_placement(self, placement):
+        # TODO: Handle booping of pieces
         state = Baip(self)
         player = self.player
         state.player = 0 if state.player == 1 else 1
@@ -110,7 +122,37 @@ class Baip:
             state.board[placement.loc] = (
                 Baip.Square.KIT_A if player == 0 else Baip.Square.KIT_B
             )
+        x, y = state.loc_to_index(placement.loc)
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                if dx != 0 or dy != 0:
+                    state.apply_boop(x, y, dx, dy, placement.piece)
         return state
+
+    def apply_boop(self, x, y, dx, dy, piece):
+        nx = x + dx
+        ny = y + dy
+        if not self.valid_index(nx, ny):
+            return
+        nloc = self.index_to_loc(nx, ny)
+        if self.board[nloc].is_empty():
+            return
+        if piece is Baip.PieceType.KIT and self.board[nloc].is_cat():
+            return
+        mx = nx + dx
+        my = ny + dy
+        if not self.valid_index(mx, my):
+            s = self.board[nloc]
+            self.board[nloc] = Baip.Square.EMPTY
+            player = 0 if s.is_player(0) else 1
+            self.pieces[player].Cat += s.is_cat()
+            self.pieces[player].Kit += s.is_kit()
+        else:
+            mloc = self.index_to_loc(mx, my)
+            if not self.board[mloc].is_empty():
+                return
+            self.board[mloc] = self.board[nloc]
+            self.board[nloc] = Baip.Square.EMPTY
 
     def apply_remove(self, loc):
         state = Baip(self)
@@ -130,15 +172,15 @@ class Baip:
             if y == 0:
                 print(f"  Player A:{" (current)" if self.player == 0 else ""}")
             if y == 1:
-                print(f"    Cats    = {self.pieces[0].Cat}")
-            if y == 2:
                 print(f"    Kittens = {self.pieces[0].Kit}")
+            if y == 2:
+                print(f"    Cats    = {self.pieces[0].Cat}")
             if y == 3:
                 print(f"  Player B:{" (current)" if self.player == 1 else ""}")
             if y == 4:
-                print(f"    Cats    = {self.pieces[1].Cat}")
-            if y == 5:
                 print(f"    Kittens = {self.pieces[1].Kit}")
+            if y == 5:
+                print(f"    Cats    = {self.pieces[1].Cat}")
 
     len_x: int = 6
     len_y: int = 6
