@@ -71,6 +71,9 @@ class Baip:
             self.loc = loc
             self.piece = piece
 
+        def __eq__(self, other):
+            return self.loc == other.loc and self.piece == other.piece
+
     def __init__(self, state=None):
         if state:
             self.board = state.board.copy()
@@ -98,10 +101,10 @@ class Baip:
         has_kits = pieces.has_kits()
         for loc, s in enumerate(self.board):
             if s.is_empty():
-                if has_cats:
-                    placements.append(Baip.Placement(loc, Baip.PieceType.CAT))
                 if has_kits:
                     placements.append(Baip.Placement(loc, Baip.PieceType.KIT))
+                if has_cats:
+                    placements.append(Baip.Placement(loc, Baip.PieceType.CAT))
         return placements
 
     def loc_to_index(self, loc):
