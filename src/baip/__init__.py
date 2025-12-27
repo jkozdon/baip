@@ -108,7 +108,6 @@ class Baip:
         return x >= 0 and x < self.len_x and y >= 0 and y < self.len_y
 
     def apply_placement(self, placement):
-        # TODO: Handle booping of pieces
         state = Baip(self)
         player = self.player
         state.player = 0 if state.player == 1 else 1
