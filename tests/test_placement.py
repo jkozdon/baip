@@ -1,5 +1,3 @@
-# TODO: test valid moves
-# TODO: Test for removes
 # TODO: Test is terminal
 # TODO: Test promotions
 
@@ -283,3 +281,63 @@ def test_cats():
                 assert c.board[loc] == Baip.Square.KIT_B
             else:
                 assert c.board[loc] == Baip.Square.EMPTY
+
+
+def test_remove():
+    b = Baip()
+    b.board[b.index_to_loc(0, 0)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(3, 0)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(0, 1)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(5, 1)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(1, 2)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(2, 2)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(3, 2)] = Baip.Square.CAT_A
+    b.board[b.index_to_loc(4, 2)] = Baip.Square.CAT_B
+    b.board[b.index_to_loc(0, 4)] = Baip.Square.CAT_A
+    b.board[b.index_to_loc(2, 4)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(3, 4)] = Baip.Square.KIT_B
+    b.board[b.index_to_loc(5, 5)] = Baip.Square.CAT_B
+    b.pieces[0].Kit = 0
+    b.pieces[0].Cat = 0
+    b.pieces[1].Kit = 0
+    b.pieces[1].Cat = 0
+
+    b.player = 0
+    loc = b.index_to_loc(0, 0)
+    assert b.board[loc] == Baip.Square.KIT_A
+    b = b.apply_remove(loc)
+    assert b.board[loc] == Baip.Square.EMPTY
+    assert b.pieces[0].Kit == 1
+    assert b.pieces[0].Cat == 0
+    assert b.pieces[1].Kit == 0
+    assert b.pieces[1].Cat == 0
+
+    b.player = 1
+    loc = b.index_to_loc(3, 4)
+    assert b.board[loc] == Baip.Square.KIT_B
+    b = b.apply_remove(loc)
+    assert b.board[loc] == Baip.Square.EMPTY
+    assert b.pieces[0].Kit == 1
+    assert b.pieces[0].Cat == 0
+    assert b.pieces[1].Kit == 1
+    assert b.pieces[1].Cat == 0
+
+    b.player = 1
+    loc = b.index_to_loc(5, 5)
+    assert b.board[loc] == Baip.Square.CAT_B
+    b = b.apply_remove(loc)
+    assert b.board[loc] == Baip.Square.EMPTY
+    assert b.pieces[0].Kit == 1
+    assert b.pieces[0].Cat == 0
+    assert b.pieces[1].Kit == 1
+    assert b.pieces[1].Cat == 1
+
+    b.player = 0
+    loc = b.index_to_loc(0, 4)
+    assert b.board[loc] == Baip.Square.CAT_A
+    b = b.apply_remove(loc)
+    assert b.board[loc] == Baip.Square.EMPTY
+    assert b.pieces[0].Kit == 1
+    assert b.pieces[0].Cat == 1
+    assert b.pieces[1].Kit == 1
+    assert b.pieces[1].Cat == 1
