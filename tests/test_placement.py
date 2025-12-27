@@ -33,6 +33,8 @@ def test_kitten_placement():
     # ......  Player B: (current)
     # ......    Kittens = 8
     # ......    Cats    = 0
+    assert b.player == 0
+    b = b.next_turn()
     assert b.player == 1
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 7
@@ -54,6 +56,8 @@ def test_kitten_placement():
     # ......    Kittens = 7
     # ......    Cats    = 0
     b = b.apply_placement(place)
+    assert b.player == 1
+    b = b.next_turn()
     assert b.player == 0
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 7
@@ -77,6 +81,8 @@ def test_kitten_placement():
     # ...b..  Player B: (current)
     # ......    Kittens = 7
     # ......    Cats    = 0
+    assert b.player == 0
+    b = b.next_turn()
     assert b.player == 1
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 7
@@ -100,6 +106,8 @@ def test_kitten_placement():
     # .b.b..  Player B:
     # ......    Kittens = 6
     # ......    Cats    = 0
+    assert b.player == 1
+    b = b.next_turn()
     assert b.player == 0
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 7
@@ -125,6 +133,8 @@ def test_kitten_placement():
     # ......  Player B: (current)
     # ..a...    Kittens = 6
     # ......    Cats    = 0
+    assert b.player == 0
+    b = b.next_turn()
     assert b.player == 1
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 6
@@ -152,6 +162,8 @@ def test_kitten_placement():
     # ......  Player B:
     # ..a...    Kittens = 5
     # ......    Cats    = 0
+    assert b.player == 1
+    b = b.next_turn()
     assert b.player == 0
     assert b.pieces[0].Cat == 0
     assert b.pieces[0].Kit == 6
@@ -201,6 +213,8 @@ def test_cats():
     # ..Aa.b  Player B: (current)
     # ..B...    Kittens = 8
     # ...a.b    Cats    = 0
+    assert c.player == 0
+    c = c.next_turn()
     assert c.player == 1
     assert c.pieces[0].Cat == 0
     assert c.pieces[0].Kit == 7
@@ -239,6 +253,8 @@ def test_cats():
     # .A.a.b  Player B: (current)
     # ......    Kittens = 8
     # .B.a.b    Cats    = 0
+    assert c.player == 0
+    c = c.next_turn()
     assert c.player == 1
     assert c.pieces[0].Kit == 8
     assert c.pieces[0].Cat == -1

@@ -121,7 +121,6 @@ class Baip:
     def apply_placement(self, placement):
         state = Baip(self)
         player = self.player
-        state.player = 0 if state.player == 1 else 1
         if placement.piece == Baip.PieceType.CAT:
             state.pieces[player].Cat -= 1
             state.board[placement.loc] = (
@@ -167,11 +166,15 @@ class Baip:
     def apply_remove(self, loc):
         state = Baip(self)
         player = self.player
-        state.player = 0 if state.player == 1 else 1
         s = state.board[loc]
         state.pieces[player].Cat += s.is_cat()
         state.pieces[player].Kit += s.is_kit()
         state.board[loc] = Baip.Square.EMPTY
+        return state
+
+    def next_turn(self):
+        state = Baip(self)
+        state.player = 1 if state.player == 0 else 0
         return state
 
     def print_state(self):
