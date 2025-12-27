@@ -1,3 +1,11 @@
+# TODO: Promotions
+#       - three cats / kittens in a row
+#       - Possible choice for resolution
+# TODO: Check if terminal
+#       - 8 cats on board (easy)
+#       - three cans in a row
+# TODO: [optional] Add ability to check if move is valid
+
 from dataclasses import dataclass
 from enum import Enum
 import copy

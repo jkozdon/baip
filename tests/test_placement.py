@@ -1,3 +1,8 @@
+# TODO: test valid moves
+# TODO: Test for removes
+# TODO: Test is terminal
+# TODO: Test promotions
+
 import pytest
 from baip import Baip
 
