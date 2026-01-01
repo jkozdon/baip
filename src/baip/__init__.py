@@ -1,9 +1,6 @@
 # TODO: Promotions
 #       - three cats / kittens in a row
 #       - Possible choice for resolution
-# TODO: Check if terminal
-#       - 8 cats on board (easy)
-#       - three cats in a row
 # TODO: [optional] Add ability to check if move is valid
 
 from dataclasses import dataclass
@@ -176,6 +173,50 @@ class Baip:
         state = Baip(self)
         state.player = 1 if state.player == 0 else 0
         return state
+
+    def is_terminal(self, player=None):
+        if player is None:
+            player = self.player
+
+        def check(x0, y0, x1, y1, x2, y2):
+            a = self.board[self.index_to_loc(x0, y0)]
+            b = self.board[self.index_to_loc(x1, y1)]
+            c = self.board[self.index_to_loc(x2, y2)]
+            return (
+                a.is_cat()
+                and a.is_player(player)
+                and b.is_cat()
+                and b.is_player(player)
+                and c.is_cat()
+                and c.is_player(player)
+            )
+
+        def check_vert(x, y):
+            return check(x, y - 1, x, y, x, y + 1)
+
+        def check_horz(x, y):
+            return check(x - 1, y, x, y, x + 1, y)
+
+        def check_diag(x, y):
+            return check(x - 1, y + 1, x, y, x + 1, y - 1) or check(
+                x - 1, y - 1, x, y, x + 1, y + 1
+            )
+
+        if self.pieces[player].TotalCats == 8 and self.pieces[player].Cat == 0:
+            return True
+        for y in range(1, self.len_y - 1):
+            for x in range(self.len_x):
+                if check_vert(x, y):
+                    return True
+        for y in range(self.len_y):
+            for x in range(1, self.len_x - 1):
+                if check_horz(x, y):
+                    return True
+        for y in range(1, self.len_y - 1):
+            for x in range(1, self.len_x - 1):
+                if check_diag(x, y):
+                    return True
+        return False
 
     def print_state(self):
         for y in range(self.len_y):
