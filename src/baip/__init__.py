@@ -81,6 +81,31 @@ class Baip:
             self.player = 0
             self.pieces = [Baip.Pieces(), Baip.Pieces()]
 
+    def get_legal_promotions(self):
+        promotions = []
+        player = self.player
+        len_x = self.len_x
+        len_y = self.len_x
+
+        def check(x, y, dx, dy):
+            for i in range(3):
+                nx = x + i * dx
+                ny = y + i * dy
+                if nx >= len_x or ny >= len_y:
+                    return False
+                loc = self.index_to_loc(nx, ny)
+                if not self.board[loc].is_player(player):
+                    return False
+            return True
+
+        dirs = [(0, 1), (1, 1), (1, 0), (-1, 1)]
+        for y in range(len_y):
+            for x in range(len_x):
+                for dir in dirs:
+                    if check(x, y, dir[0], dir[1]):
+                        promotions.append((x, y, dir[0], dir[1]))
+        return promotions
+
     def get_legal_removes(self):
         removes: list[int] = []
         player = self.player

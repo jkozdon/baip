@@ -1,4 +1,3 @@
-# TODO: Test is terminal
 # TODO: Test promotions
 
 import pytest
