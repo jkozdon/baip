@@ -1,6 +1,3 @@
-# TODO: Test is terminal
-# TODO: Test promotions
-
 import pytest
 from baip import Baip
 
