@@ -304,7 +304,7 @@ def test_remove():
     b.player = 0
     loc = b.index_to_loc(0, 0)
     assert b.board[loc] == Baip.Square.KIT_A
-    b = b.apply_remove(loc)
+    b = b.apply_remove(*(b.loc_to_index(loc)))
     assert b.board[loc] == Baip.Square.EMPTY
     assert b.pieces[0].Kit == 1
     assert b.pieces[0].Cat == 0
@@ -314,7 +314,7 @@ def test_remove():
     b.player = 1
     loc = b.index_to_loc(3, 4)
     assert b.board[loc] == Baip.Square.KIT_B
-    b = b.apply_remove(loc)
+    b = b.apply_remove(*(b.loc_to_index(loc)))
     assert b.board[loc] == Baip.Square.EMPTY
     assert b.pieces[0].Kit == 1
     assert b.pieces[0].Cat == 0
@@ -324,7 +324,7 @@ def test_remove():
     b.player = 1
     loc = b.index_to_loc(5, 5)
     assert b.board[loc] == Baip.Square.CAT_B
-    b = b.apply_remove(loc)
+    b = b.apply_remove(*(b.loc_to_index(loc)))
     assert b.board[loc] == Baip.Square.EMPTY
     assert b.pieces[0].Kit == 1
     assert b.pieces[0].Cat == 0
@@ -334,7 +334,7 @@ def test_remove():
     b.player = 0
     loc = b.index_to_loc(0, 4)
     assert b.board[loc] == Baip.Square.CAT_A
-    b = b.apply_remove(loc)
+    b = b.apply_remove(*(b.loc_to_index(loc)))
     assert b.board[loc] == Baip.Square.EMPTY
     assert b.pieces[0].Kit == 1
     assert b.pieces[0].Cat == 1

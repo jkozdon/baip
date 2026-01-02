@@ -185,7 +185,8 @@ class Baip:
             self.board[mloc] = self.board[nloc]
             self.board[nloc] = Baip.Square.EMPTY
 
-    def apply_remove(self, loc):
+    def apply_remove(self, x, y):
+        loc = self.index_to_loc(x, y)
         state = Baip(self)
         player = self.player
         s = state.board[loc]
