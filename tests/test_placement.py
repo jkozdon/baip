@@ -22,7 +22,7 @@ def test_kitten_placement():
             loc = b.index_to_loc(x, y)
             b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(0, 0), Baip.PieceType.KIT)
+    place = Baip.Placement(0, 0, Baip.PieceType.KIT)
     b = b.apply_placement(place)
     # a.....  Player A:
     # ......    Kittens = 7
@@ -45,7 +45,7 @@ def test_kitten_placement():
             else:
                 assert b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(2, 2), Baip.PieceType.KIT)
+    place = Baip.Placement(2, 2, Baip.PieceType.KIT)
     # a.....  Player A: (current)
     # ......    Kittens = 7
     # .b....    Cats    = 0
@@ -70,7 +70,7 @@ def test_kitten_placement():
             else:
                 assert b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(1, 1), Baip.PieceType.KIT)
+    place = Baip.Placement(1, 1, Baip.PieceType.KIT)
     b = b.apply_placement(place)
     # ......  Player A:
     # .a....    Kittens = 7
@@ -95,7 +95,7 @@ def test_kitten_placement():
             else:
                 assert b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(1, 3), Baip.PieceType.KIT)
+    place = Baip.Placement(1, 3, Baip.PieceType.KIT)
     b = b.apply_placement(place)
     # ......  Player A: (current)
     # .a....    Kittens = 7
@@ -122,7 +122,7 @@ def test_kitten_placement():
             else:
                 assert b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(2, 4), Baip.PieceType.KIT)
+    place = Baip.Placement(2, 4, Baip.PieceType.KIT)
     b = b.apply_placement(place)
     # ......  Player A:
     # .a....    Kittens = 6
@@ -151,7 +151,7 @@ def test_kitten_placement():
             else:
                 assert b.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(2, 0), Baip.PieceType.KIT)
+    place = Baip.Placement(2, 0, Baip.PieceType.KIT)
     b = b.apply_placement(place)
     # ..b...  Player A: (current)
     # .a....    Kittens = 6
@@ -201,7 +201,7 @@ def test_cats():
     # ..Bab.    Kittens = 8
     # ......    Cats    = 0
 
-    place = Baip.Placement(b.index_to_loc(3, 3), Baip.PieceType.KIT)
+    place = Baip.Placement(3, 3, Baip.PieceType.KIT)
     c = b.apply_placement(place)
     # not a real board
     # ......  Player A:
@@ -241,7 +241,7 @@ def test_cats():
             else:
                 assert c.board[loc] == Baip.Square.EMPTY
 
-    place = Baip.Placement(b.index_to_loc(3, 3), Baip.PieceType.CAT)
+    place = Baip.Placement(3, 3, Baip.PieceType.CAT)
     c = b.apply_placement(place)
     # not a real board
     # ......  Player A:

@@ -65,9 +65,9 @@ class Baip:
         y: int
         piece: "Baip.PieceType"
 
-        def __init__(self, loc, piece):
-            self.x = loc % 6
-            self.y = loc // 6
+        def __init__(self, x, y, piece):
+            self.x = x
+            self.y = y
             self.piece = piece
 
         def __eq__(self, other):
@@ -125,10 +125,11 @@ class Baip:
         has_kits = pieces.has_kits()
         for loc, s in enumerate(self.board):
             if s.is_empty():
+                x, y = self.loc_to_index(loc)
                 if has_kits:
-                    placements.append(Baip.Placement(loc, Baip.PieceType.KIT))
+                    placements.append(Baip.Placement(x, y, Baip.PieceType.KIT))
                 if has_cats:
-                    placements.append(Baip.Placement(loc, Baip.PieceType.CAT))
+                    placements.append(Baip.Placement(x, y, Baip.PieceType.CAT))
         return placements
 
     def loc_to_index(self, loc):

@@ -15,7 +15,8 @@ def test_valid_empty_board():
     # ......    Cats    = 0
     placements = b.get_legal_placements()
     for loc in range(b.len_x * b.len_y):
-        assert placements[loc] == Baip.Placement(loc, Baip.PieceType.KIT)
+        x, y = b.loc_to_index(loc)
+        assert placements[loc] == Baip.Placement(x, y, Baip.PieceType.KIT)
 
     b.player = 1
     # ......  Player A:
@@ -26,7 +27,8 @@ def test_valid_empty_board():
     # ......    Cats    = 0
     placements = b.get_legal_placements()
     for loc in range(b.len_x * b.len_y):
-        assert placements[loc] == Baip.Placement(loc, Baip.PieceType.KIT)
+        x, y = b.loc_to_index(loc)
+        assert placements[loc] == Baip.Placement(x, y, Baip.PieceType.KIT)
 
     b.player = 0
     b.pieces[0].Cat = 1
@@ -39,9 +41,10 @@ def test_valid_empty_board():
     placements = b.get_legal_placements()
     i = 0
     for loc in range(b.len_x * b.len_y):
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.KIT)
+        x, y = b.loc_to_index(loc)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.KIT)
         i += 1
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.CAT)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.CAT)
         i += 1
 
     b.player = 1
@@ -55,9 +58,10 @@ def test_valid_empty_board():
     placements = b.get_legal_placements()
     i = 0
     for loc in range(b.len_x * b.len_y):
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.KIT)
+        x, y = b.loc_to_index(loc)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.KIT)
         i += 1
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.CAT)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.CAT)
         i += 1
 
     b.player = 0
@@ -72,7 +76,8 @@ def test_valid_empty_board():
     placements = b.get_legal_placements()
     i = 0
     for loc in range(b.len_x * b.len_y):
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.CAT)
+        x, y = b.loc_to_index(loc)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.CAT)
         i += 1
 
     b.player = 1
@@ -87,7 +92,8 @@ def test_valid_empty_board():
     placements = b.get_legal_placements()
     i = 0
     for loc in range(b.len_x * b.len_y):
-        assert placements[i] == Baip.Placement(loc, Baip.PieceType.CAT)
+        x, y = b.loc_to_index(loc)
+        assert placements[i] == Baip.Placement(x, y, Baip.PieceType.CAT)
         i += 1
 
 
@@ -142,26 +148,32 @@ def test_valid_partial_filled():
 
     placements = b.get_legal_placements()
     for ind, placement in enumerate(placements):
-        assert placement == Baip.Placement(indices[ind], Baip.PieceType.KIT)
+        x, y = b.loc_to_index(indices[ind])
+        assert placement == Baip.Placement(x, y, Baip.PieceType.KIT)
 
     b.pieces[0].Cat = 1
     placements = b.get_legal_placements()
     for ind, placement in enumerate(placements):
+        x, y = b.loc_to_index(indices[ind // 2])
         assert placement == Baip.Placement(
-            indices[ind // 2],
+            x,
+            y,
             Baip.PieceType.KIT if ind % 2 == 0 else Baip.PieceType.CAT,
         )
 
     b.player = 1
     placements = b.get_legal_placements()
     for ind, placement in enumerate(placements):
-        assert placement == Baip.Placement(indices[ind], Baip.PieceType.KIT)
+        x, y = b.loc_to_index(indices[ind])
+        assert placement == Baip.Placement(x, y, Baip.PieceType.KIT)
 
     b.pieces[1].Cat = 1
     placements = b.get_legal_placements()
     for ind, placement in enumerate(placements):
+        x, y = b.loc_to_index(indices[ind // 2])
         assert placement == Baip.Placement(
-            indices[ind // 2],
+            x,
+            y,
             Baip.PieceType.KIT if ind % 2 == 0 else Baip.PieceType.CAT,
         )
 
