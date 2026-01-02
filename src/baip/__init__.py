@@ -115,7 +115,7 @@ class Baip:
         if not pieces.has_cats() and not pieces.has_kits():
             for loc, s in enumerate(self.board):
                 if s.is_player(player):
-                    removes.append(loc)
+                    removes.append(self.loc_to_index(loc))
         return removes
 
     def get_legal_placements(self):

@@ -198,11 +198,11 @@ def test_removes():
     assert len(placements) == 0
 
     removes = b.get_legal_removes()
-    assert removes[0] == b.index_to_loc(0, 0)
-    assert removes[1] == b.index_to_loc(3, 0)
-    assert removes[2] == b.index_to_loc(2, 2)
-    assert removes[3] == b.index_to_loc(3, 2)
-    assert removes[4] == b.index_to_loc(0, 4)
+    assert removes[0] == (0, 0)
+    assert removes[1] == (3, 0)
+    assert removes[2] == (2, 2)
+    assert removes[3] == (3, 2)
+    assert removes[4] == (0, 4)
 
     b.player = 1
     b.pieces[0].Kit = 4
@@ -214,10 +214,10 @@ def test_removes():
     assert len(placements) == 0
 
     removes = b.get_legal_removes()
-    assert removes[0] == b.index_to_loc(0, 1)
-    assert removes[1] == b.index_to_loc(5, 1)
-    assert removes[2] == b.index_to_loc(1, 2)
-    assert removes[3] == b.index_to_loc(4, 2)
-    assert removes[4] == b.index_to_loc(2, 4)
-    assert removes[5] == b.index_to_loc(3, 4)
-    assert removes[6] == b.index_to_loc(5, 5)
+    assert removes[0] == (0, 1)
+    assert removes[1] == (5, 1)
+    assert removes[2] == (1, 2)
+    assert removes[3] == (4, 2)
+    assert removes[4] == (2, 4)
+    assert removes[5] == (3, 4)
+    assert removes[6] == (5, 5)
