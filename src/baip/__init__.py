@@ -61,15 +61,17 @@ class Baip:
         CAT = 1
 
     class Placement:
-        loc: int
+        x: int
+        y: int
         piece: "Baip.PieceType"
 
         def __init__(self, loc, piece):
-            self.loc = loc
+            self.x = loc % 6
+            self.y = loc // 6
             self.piece = piece
 
         def __eq__(self, other):
-            return self.loc == other.loc and self.piece == other.piece
+            return self.x == other.x and self.y == other.y and self.piece == other.piece
 
     def __init__(self, state=None):
         if state:
@@ -143,17 +145,14 @@ class Baip:
     def apply_placement(self, placement):
         state = Baip(self)
         player = self.player
+        x, y = placement.x, placement.y
+        loc = self.index_to_loc(x, y)
         if placement.piece == Baip.PieceType.CAT:
             state.pieces[player].Cat -= 1
-            state.board[placement.loc] = (
-                Baip.Square.CAT_A if player == 0 else Baip.Square.CAT_B
-            )
+            state.board[loc] = Baip.Square.CAT_A if player == 0 else Baip.Square.CAT_B
         else:
             state.pieces[player].Kit -= 1
-            state.board[placement.loc] = (
-                Baip.Square.KIT_A if player == 0 else Baip.Square.KIT_B
-            )
-        x, y = state.loc_to_index(placement.loc)
+            state.board[loc] = Baip.Square.KIT_A if player == 0 else Baip.Square.KIT_B
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
                 if dx != 0 or dy != 0:
