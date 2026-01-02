@@ -194,6 +194,18 @@ class Baip:
         state.board[loc] = Baip.Square.EMPTY
         return state
 
+    def apply_promotion(self, x, y, dx, dy):
+        state = Baip(self)
+        player = self.player
+        for i in range(3):
+            s = state.board[self.index_to_loc(x, y)]
+            state.pieces[player].TotalCats += s.is_kit()
+            state.pieces[player].Cat += 1
+            state.board[self.index_to_loc(x, y)] = self.Square.EMPTY
+            x += dx
+            y += dy
+        return state
+
     def next_turn(self):
         state = Baip(self)
         state.player = 1 if state.player == 0 else 0

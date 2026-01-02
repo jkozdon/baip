@@ -64,3 +64,23 @@ def test_legal_promotions():
     assert promotions[2] == (4, 2, 0, 1)
     assert promotions[3] == (5, 2, -1, 1)
     assert promotions[4] == (3, 4, 1, 0)
+
+
+def test_promotions():
+    b = Baip()
+    promotions = b.get_legal_promotions()
+    assert len(promotions) == 0
+
+    b = Baip()
+    b.board[b.index_to_loc(3, 2)] = Baip.Square.KIT_A
+    b.board[b.index_to_loc(4, 2)] = Baip.Square.CAT_A
+    b.board[b.index_to_loc(5, 2)] = Baip.Square.KIT_A
+    b.pieces[0].TotalCats = 1
+    b.pieces[0].Kit -= 2
+    c = b.apply_promotion(3, 2, 1, 0)
+    assert c.pieces[0].TotalCats == 3
+    assert c.pieces[0].Cat == 3
+    assert c.pieces[0].Kit == 6
+    assert c.board[b.index_to_loc(3, 2)] == Baip.Square.EMPTY
+    assert c.board[b.index_to_loc(4, 2)] == Baip.Square.EMPTY
+    assert c.board[b.index_to_loc(5, 2)] == Baip.Square.EMPTY
