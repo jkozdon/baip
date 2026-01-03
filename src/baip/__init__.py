@@ -257,7 +257,13 @@ class Baip:
         return False
 
     def print_state(self):
+        print("  ", end="")
+        for x in range(self.len_x):
+            print(x, end="")
+        print()
+        print(" +------")
         for y in range(self.len_y):
+            print(f"{y}|", end="")
             for x in range(self.len_x):
                 loc = x + y * self.len_x
                 print(self.board[loc].to_char(), end="")
