@@ -18,8 +18,13 @@ def coord_to_index(x: int, y: int) -> int:
 
 def index_to_coord(index: int) -> tuple[int, int]:
     x = index % LEN_X
-    y = index // LE_NX
+    y = index // LEN_X
     return (x, y)
+
+
+class Phase(Enum):
+    PLACEMENT = auto()
+    SPECIAL = auto()
 
 
 @dataclass(frozen=True)
@@ -84,6 +89,7 @@ class State:
     active_player: int
     board: tuple[Square, ...]
     pieces: tuple[Pieces, Pieces]
+    phase: Phase
     turn_counter: int
 
 
@@ -91,7 +97,13 @@ def initial_state() -> State:
     board = tuple(Square.EMPTY for _ in range(LEN_X * LEN_Y))
     init_piece = Pieces(kittens_remaining=8, cats_remaining=0, cats_on_board=0)
     pieces = (init_piece, init_piece)
-    return State(active_player=0, board=board, pieces=pieces, turn_counter=0)
+    return State(
+        active_player=0,
+        board=board,
+        pieces=pieces,
+        turn_counter=0,
+        phase=Phase.PLACEMENT,
+    )
 
 
 def print_state(state) -> None:
@@ -122,14 +134,29 @@ def is_terminal(state: State) -> bool:
     return random.choice((True, False))
 
 
-# TODO: implement for real!
 def get_legal_actions(state: State) -> list[Action]:
+    actions = []
+    has_kittens = state.pieces[state.active_player].kittens_remaining > 0
+    has_cats = state.pieces[state.active_player].cats_remaining > 0
+    if state.phase is Phase.PLACEMENT:
+        for y in range(LEN_Y):
+            for x in range(LEN_Y):
+                index = coord_to_index(x, y)
+                if state.board[index] is Square.EMPTY:
+                    if has_kittens:
+                        p = Placement(x=x, y=y, piece=PieceType.KIT)
+                        actions.append(p)
+                    if has_cats:
+                        p = Placement(x=x, y=y, piece=PieceType.CAT)
+                        actions.append(p)
+    elif state.phase is Phase.SPECIAL:
+        raise Exception("Special not implemented yet")
     return (None, None)
 
 
 # TODO: implement for real!
 def apply_action(state: State, action: Action) -> State:
-    pass
+    return state
 
 
 # TODO: implement for real!

@@ -10,6 +10,8 @@ def main():
         actions = baip.get_legal_actions(state)
         action = random.choice(actions)
         state = baip.apply_action(state, action)
+        print()
+        baip.print_state(state)
 
     return baip.get_result(state)
 
