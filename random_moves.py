@@ -4,6 +4,7 @@ import random
 
 def main():
     state = baip.initial_state()
+    baip.print_state(state)
 
     while not baip.is_terminal(state):
         actions = baip.get_legal_actions(state)

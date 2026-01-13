@@ -12,11 +12,21 @@ LEN_X = 8
 LEN_Y = 8
 
 
+def coord_to_index(x: int, y: int) -> int:
+    return x + y * LEN_X
+
+
+def index_to_coord(index: int) -> tuple[int, int]:
+    x = index % LEN_X
+    y = index // LE_NX
+    return (x, y)
+
+
 @dataclass(frozen=True)
 class Action:
     """Base class for all action types."""
-    pass
 
+    pass
 
 
 class PieceType(Enum):
@@ -49,6 +59,18 @@ class Square(Enum):
     KIT_B = auto()
     CAT_B = auto()
 
+    def to_char(self):
+        if self is Square.EMPTY:
+            return "."
+        if self is Square.KIT_A:
+            return "a"
+        if self is Square.CAT_A:
+            return "A"
+        if self is Square.KIT_B:
+            return "b"
+        if self is Square.CAT_B:
+            return "B"
+
 
 @dataclass(frozen=True)
 class Pieces:
@@ -72,6 +94,29 @@ def initial_state() -> State:
     return State(active_player=0, board=board, pieces=pieces, turn_counter=0)
 
 
+def print_state(state) -> None:
+    print(f"Active player: {state.active_player}")
+    print(f"turn counters: {state.turn_counter}")
+    for player in range(2):
+        print()
+        print(f"Player {player} pieces:")
+        print(f"  kittens: {state.pieces[player].kittens_remaining}")
+        print(f"  cat:     {state.pieces[player].cats_remaining}")
+
+    print()
+    print("  ", end="")
+    for x in range(LEN_X):
+        print(x, end="")
+    print()
+    print(" +--------")
+    for y in range(LEN_Y):
+        print(f"{y}|", end="")
+        for x in range(LEN_X):
+            index = coord_to_index(x, y)
+            print(state.board[index].to_char(), end="")
+        print()
+
+
 # TODO: implement for real!
 def is_terminal(state: State) -> bool:
     return random.choice((True, False))
@@ -79,7 +124,7 @@ def is_terminal(state: State) -> bool:
 
 # TODO: implement for real!
 def get_legal_actions(state: State) -> list[Action]:
-    return (None)
+    return (None, None)
 
 
 # TODO: implement for real!
