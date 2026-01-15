@@ -6,7 +6,8 @@ def main():
     state = baip.initial_state()
     baip.print_state(state)
 
-    while not baip.is_terminal(state):
+    # while not baip.is_terminal(state):
+    while state.phase != baip.Phase.SPECIAL:
         actions = baip.get_legal_actions(state)
         action = random.choice(actions)
         state = baip.apply_action(state, action)
