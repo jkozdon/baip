@@ -27,8 +27,9 @@ def index_to_coord(index: int) -> tuple[int, int]:
 
 
 class Phase(Enum):
-    PLACEMENT = auto()
+    TERMINAL = auto()
     SPECIAL = auto()
+    PLACEMENT = auto()
 
 
 @dataclass(frozen=True)
@@ -134,32 +135,65 @@ def print_state(state) -> None:
         print()
 
 
-# TODO: implement for real!
 def is_terminal(state: State) -> bool:
-    return random.choice((True, False))
+    player = state.active_player
+    if (
+        state.pieces[player].total_cats == 8
+        and state.pieces[player].cats_remaining == 0
+    ):
+        print(f"Player {"a" if player == 0 else "b"} placed all cats")
+        return True
+
+    board = state.board
+    cat = Square.CAT_A if player == 0 else Square.CAT_B
+
+    def check(squares):
+        for x, y in squares:
+            if not valid_coord(x, y):
+                return False
+            loc = coord_to_index(x, y)
+            if board[loc] != cat:
+                return False
+        return True
+
+    dirs = [(0, 1), (1, 1), (1, 0), (-1, 1)]
+    for y in range(LEN_Y):
+        for x in range(LEN_X):
+            for dir in dirs:
+                dx = dir[0]
+                dy = dir[1]
+                squares = (
+                    (x, y),
+                    (x + dx, y + dy),
+                    (x + 2 * dx, y + 2 * dy),
+                )
+                if check(squares):
+                    ps = "a" if player == 0 else "b"
+                    print(f"Player {ps} has cats {squares}")
+                    return True
+    return False
 
 
-def get_legal_actions(state: State) -> list[Action]:
+def get_legal_placements(state: State) -> list[Placement]:
     actions = []
     has_kittens = state.pieces[state.active_player].kittens_remaining > 0
     has_cats = state.pieces[state.active_player].cats_remaining > 0
-    if state.phase is Phase.PLACEMENT:
-        for y in range(LEN_Y):
-            for x in range(LEN_Y):
-                index = coord_to_index(x, y)
-                if state.board[index] is Square.EMPTY:
-                    if has_kittens:
-                        p = Placement(x=x, y=y, piece=PieceType.KIT)
-                        actions.append(p)
-                    if has_cats:
-                        p = Placement(x=x, y=y, piece=PieceType.CAT)
-                        actions.append(p)
-    elif state.phase is Phase.SPECIAL:
-        raise Exception("Special not implemented yet")
+    for y in range(LEN_Y):
+        for x in range(LEN_Y):
+            index = coord_to_index(x, y)
+            if state.board[index] is Square.EMPTY:
+                if has_kittens:
+                    p = Placement(x=x, y=y, piece=PieceType.KIT)
+                    actions.append(p)
+                if has_cats:
+                    p = Placement(x=x, y=y, piece=PieceType.CAT)
+                    actions.append(p)
     return actions
 
 
-def get_legal_promotions(board, player) -> int:
+def get_legal_promotions(state) -> list[Promotion]:
+    player = state.active_player
+    board = state.board
     kitcats = (
         (Square.KIT_A, Square.CAT_A)
         if player == 0
@@ -194,20 +228,90 @@ def get_legal_promotions(board, player) -> int:
     return promotions
 
 
-def apply_promotion(board, pieces, player, promotion):
-    kittens_remaining = pieces[player].kittens_remaining
-    cats_remaining = pieces[player].cats_remaining
-    total_cats = pieces[player].total_cats
+def get_legal_removes(state) -> list[Removal]:
+    player = state.active_player
+    if (
+        state.pieces[player].cats_remaining > 0
+        or state.pieces[player].kittens_remaining > 0
+    ):
+        return []
+    removal = []
+    board = state.board
+    kitcats = (
+        (Square.KIT_A, Square.CAT_A)
+        if player == 0
+        else (Square.KIT_B, Square.CAT_B)
+    )
+    for y in range(LEN_Y):
+        for x in range(LEN_X):
+            index = coord_to_index(x, y)
+            if board[index] in kitcats:
+                removal.append(Removal(x, y))
+    return removal
+
+
+def get_legal_actions(state: State) -> list[Action]:
+    if state.phase is Phase.PLACEMENT:
+        return get_legal_placements(state)
+    else:
+        promotions = get_legal_promotions(state)
+        removes = get_legal_removes(state)
+        return promotions + removes
+
+
+def apply_promotion(state: State, promotion: Promotion) -> State:
+    player = state.active_player
+    p = state.pieces[player]
+    kittens_remaining = p.kittens_remaining
+    cats_remaining = p.cats_remaining
+    total_cats = p.total_cats
+    board = list(state.board)
     for x, y in promotion.squares:
         index = coord_to_index(x, y)
         if board[index] == Square.KIT_A or board[index] == Square.KIT_B:
             total_cats += 1
         cats_remaining += 1
         board[index] = Square.EMPTY
+
+    next_player = 1 if player == 0 else 0
+    next_turn_count = state.turn_counter + player
+    pieces = list(state.pieces)
     pieces[player] = Pieces(
         kittens_remaining=kittens_remaining,
         cats_remaining=cats_remaining,
         total_cats=total_cats,
+    )
+    return State(
+        active_player=next_player,
+        board=tuple(board),
+        pieces=tuple(pieces),
+        phase=Phase.PLACEMENT,
+        turn_counter=next_turn_count,
+    )
+
+
+def apply_removal(state: State, removal: Removal) -> State:
+    player = state.active_player
+    board = list(state.board)
+    index = coord_to_index(removal.x, removal.y)
+    square = board[index]
+    board[index] = Square.EMPTY
+    pieces = list(state.pieces)
+    total_cats = pieces[player].total_cats
+    if square in (Square.KIT_A, square.KIT_B):
+        total_cats += 1
+    pieces[player] = Pieces(
+        kittens_remaining=0, cats_remaining=1, total_cats=total_cats
+    )
+
+    next_player = 1 if player == 0 else 0
+    next_turn_count = state.turn_counter + player
+    return State(
+        active_player=next_player,
+        board=tuple(board),
+        pieces=tuple(pieces),
+        phase=Phase.PLACEMENT,
+        turn_counter=next_turn_count,
     )
 
 
@@ -265,7 +369,6 @@ def apply_boop(board, pieces, x, y, dx, dy, is_cat) -> None:
 
 
 def apply_placement(state: State, placement: Placement) -> State:
-    print(placement)
     place_cat = placement.piece == PieceType.CAT
     player = state.active_player
     board = list(state.board)
@@ -288,37 +391,37 @@ def apply_placement(state: State, placement: Placement) -> State:
                 board, pieces, placement.x, placement.y, dx, dy, place_cat
             )
 
-    # TODO: Rework this so that get_legal_promotions is really
-    # get_legal_actions and phase set to Special
-    # if one action apply
-    # otherwise return the state as is
-    # If no actions that just advance the turn counter.
-
-    phase = Phase.PLACEMENT
-    promotions = get_legal_promotions(board, player)
-    if (
-        pieces[player].kittens_remaining == 0
-        and pieces[player].cats_remaining == 0
-    ) or len(promotions) > 1:
-        phase = Phase.SPECIAL
-    elif len(promotions) == 1:
-        apply_promotion(board, pieces, player, promotions[0])
-
-    turn_counter = state.turn_counter
-    if phase == Phase.PLACEMENT:
-        if player == 1:
-            player = 0
-            turn_counter += 1
-        else:
-            player = 1
-
-    return State(
+    state = State(
         active_player=player,
         board=tuple(board),
         pieces=tuple(pieces),
-        phase=phase,
-        turn_counter=turn_counter,
+        phase=Phase.SPECIAL,
+        turn_counter=state.turn_counter,
     )
+
+    if is_terminal(state):
+        return State(
+            active_player=player,
+            board=tuple(board),
+            pieces=tuple(pieces),
+            phase=Phase.TERMINAL,
+            turn_counter=state.turn_counter,
+        )
+
+    actions = get_legal_actions(state)
+
+    if len(actions) == 0:
+        state = State(
+            active_player=1 if state.active_player == 0 else 1,
+            board=state.board,
+            pieces=state.pieces,
+            phase=Phase.PLACEMENT,
+            turn_counter=state.turn_counter + state.active_player,
+        )
+    elif len(actions) == 1:
+        state = apply_action(state, actions[0])
+
+    return state
 
 
 # TODO: implement for real!
@@ -326,7 +429,11 @@ def apply_action(state: State, action: Action) -> State:
     if type(action) is Placement:
         return apply_placement(state, action)
     elif type(action) is Promotion:
-        return state
+        return apply_promotion(state, action)
+    elif type(action) is Removal:
+        return apply_removal(state, action)
+    else:
+        raise ValueError("invalid action")
 
 
 # TODO: implement for real!
